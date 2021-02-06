@@ -1,3 +1,2 @@
-export { DateFormatter, getMonthFromInt } from './DateFormatter'
+export { DateFormatter, getMonthFromInt, formatDate } from './DateFormatter'
 export { PrecisionTime } from './PrecisionTime'
-export { formatDate } from './formatDate'

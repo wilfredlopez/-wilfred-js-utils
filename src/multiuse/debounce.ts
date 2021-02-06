@@ -23,6 +23,8 @@ interface DebounceOptions {
   trailing?: number
 }
 
+type FrameRequestCallback = (...args: any[]) => void
+
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number,
@@ -75,7 +77,7 @@ export function debounce<T extends (...args: any[]) => any>(
     if (useRAF) {
       return root.cancelAnimationFrame(id)
     }
-    clearTimeout(id)
+    clearTimeout(id as any)
   }
 
   function leadingEdge(time: number) {

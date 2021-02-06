@@ -1,4 +1,6 @@
-import { formatDate } from "./formatDate";
+import { formatDate } from "./formatDate"
+
+export { formatDate }
 /**
  * add the getFormattedDate function to the Date Object.
  * @extends Date
@@ -22,8 +24,8 @@ export class DateFormatter extends Date {
       "Oct",
       "Nov",
       "Dec",
-    ];
-    return `${this.getDate()}-${months[this.getMonth()]}-${this.getFullYear()}`;
+    ]
+    return `${this.getDate()}-${months[this.getMonth()]}-${this.getFullYear()}`
   }
   formattedFullDate() {
     const months = [
@@ -39,20 +41,19 @@ export class DateFormatter extends Date {
       "Octover",
       "November",
       "December",
-    ];
-    return `${this.getDate()}-${months[this.getMonth()]}-${this.getFullYear()}`;
+    ]
+    return `${this.getDate()}-${months[this.getMonth()]}-${this.getFullYear()}`
   }
 
   timeDistance(start: Date) {
-    let distance = Math.abs(new Date().getTime() - start.getTime());
-    const hours = Math.floor(distance / 3600000);
-    distance -= hours * 3600000;
-    const minutes = Math.floor(distance / 60000);
-    distance -= minutes * 60000;
-    const seconds = Math.floor(distance / 1000);
-    return `${hours}:${("0" + minutes).slice(-2)}:${
-      ("0" + seconds).slice(-2)
-    } and ${distance}ms`;
+    let distance = Math.abs(new Date().getTime() - start.getTime())
+    const hours = Math.floor(distance / 3600000)
+    distance -= hours * 3600000
+    const minutes = Math.floor(distance / 60000)
+    distance -= minutes * 60000
+    const seconds = Math.floor(distance / 1000)
+    return `${hours}:${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)
+      } and ${distance}ms`
   }
   static getFormattedShortDate = new DateFormatter().formatedDate;
   static getFormattedLongDate = new DateFormatter().formattedFullDate;
@@ -62,7 +63,7 @@ export class DateFormatter extends Date {
   static getMonthFromInt = getMonthFromInt;
 }
 
-export type NMonthParam = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export type NMonthParam = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
 /**
    * Returns the formated month in type string. @example: 'March'
    * @param n Month number. based 0. example for January=0, February=1
@@ -70,30 +71,30 @@ export type NMonthParam = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 export function getMonthFromInt(n: NMonthParam | number) {
   switch (n) {
     case 0:
-      return "January";
+      return "January"
     case 1:
-      return "February";
+      return "February"
     case 2:
-      return "March";
+      return "March"
     case 3:
-      return "April";
+      return "April"
     case 4:
-      return "May";
+      return "May"
     case 5:
-      return "June";
+      return "June"
     case 6:
-      return "July";
+      return "July"
     case 7:
-      return "August";
+      return "August"
     case 8:
-      return "September";
+      return "September"
     case 9:
-      return "October";
+      return "October"
     case 10:
-      return "November";
+      return "November"
     case 11:
-      return "December";
+      return "December"
     default:
-      return null;
+      return null
   }
 }

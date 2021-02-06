@@ -7,7 +7,7 @@ export { default as deepCopy } from "./deepCopy"
 export { debounce } from "./debounce"
 export { throttle } from "./throttle"
 export { default as getTypeName } from './getTypeName'
-export * from './utils'
+export * from './multi-utils'
 export const sleep = (n: number) => new Promise((r) => setTimeout(r, n))
 
 /**

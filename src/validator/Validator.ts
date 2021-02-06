@@ -15,7 +15,6 @@ import { isNullOrUndefined } from './isNullOrUndefined'
 import { isEmptyObject } from './isEmptyObject'
 import { isObject } from './isObject'
 import { isArray } from './isArray'
-import { isFileInput } from './isFileInput'
 import { maxLength, minLength, isLength } from './len'
 import { isEmpty, isUndefined } from './multi'
 
@@ -33,7 +32,6 @@ export const Validator = {
   isNullOrUndefined,
   isObject,
   isEmptyObject,
-  isFileInput: isFileInput,
   isDeepEqual,
   // isDeepEqual: isDeepEqualWilfred,
   isDeepEqualReact,
@@ -42,9 +40,6 @@ export const Validator = {
   maxLength,
   isLength: isLength,
   isEmpty: isEmpty,
-  isHTMLElement: (value: any): value is HTMLElement =>
-    value instanceof HTMLElement
-  ,
   isNotEmptyString(arg: any): arg is string {
     return typeof arg === "string" && arg.trim() !== ""
   },
