@@ -6,225 +6,67 @@ import { isSerializable } from "./isSerializable"
 import { isDeepEqual, isDeepEqualReact } from "./isDeepEqual"
 import { alpha, alphanumeric, decimal } from "./constants"
 import { merge, includes, zip } from "../multiuse"
-declare const $NestedValue: unique symbol
-
-export type IsFlatObject<T extends object> = Extract<
-  Exclude<T[keyof T], NestedValue | Date | FileList>,
-  any[] | object
-> extends never ? true
-  : false
-export type NestedValue<TValue extends any[] | object = any[] | object> = {
-  [$NestedValue]: never
-} & TValue
-
-export type EmptyObject = { [K in string | number]: never }
-export type Primitive = string | boolean | number | symbol | null | undefined
-export type FieldElement<TFieldValues extends FieldValues = FieldValues> =
-  | HTMLInputElement
-  | HTMLSelectElement
-  | HTMLTextAreaElement
-  | CustomElement<TFieldValues>
-export type FieldValues = Record<string, any>
-export type FieldName<TFieldValues extends FieldValues> = IsFlatObject<
-  TFieldValues
-> extends true ? Extract<keyof TFieldValues, string>
-  : string
-
-export type CustomElement<TFieldValues extends FieldValues> = {
-  name: FieldName<TFieldValues>
-  type?: string
-  value?: any
-  checked?: boolean
-  options?: HTMLOptionsCollection
-  files?: FileList | null
-  focus?: VoidFunction
-}
-
-
-
-export type TypeOfConditions =
-  | "bigint"
-  | "boolean"
-  | "function"
-  | "number"
-  | "object"
-  | "string"
-  | "symbol"
-  | "undefined"
-
-
-interface MatchType {
-  "bigint": BigInt
-  "boolean": boolean
-  "function": (...args: any[]) => any
-  "number": number
-  "object": object
-  "string": string
-  "symbol": symbol
-  "undefined": undefined,
-}
-
-
-
-
-
-
-
-
-
-
-
+import { isEmail } from './isEmail'
+import { isJSON } from './isJSON'
+import { isString } from './isString'
+import { isTypeof } from './isTypeOf'
+import { isPrimitive } from './isPrimitive'
+import { isNullOrUndefined } from './isNullOrUndefined'
+import { isEmptyObject } from './isEmptyObject'
+import { isObject } from './isObject'
+import { isArray } from './isArray'
+import { isFileInput } from './isFileInput'
+import { maxLength, minLength, isLength } from './len'
+import { isEmpty, isUndefined } from './multi'
 
 /**
  * Validator
  */
-export class Validator {
-  /**
-     *  Verify if its a valid email address. works with domain names up to 11 digits long. 
-     * @note the largest domain name i could find was .accountants
-     * @param email email to validate
-     * @param domainLimit limit the domain to certain characters long. Defaults to 11. 
-     * 
-```const email = 'test@email.info'```
-     * @example 
-     *  Validator.isEmail('notAnEmail') //false;
-     *  Validator.isEmail(email) //true;
-     * 
-     *  //using custom domainLimit
-     *  Validator.isEmail(email,3) //false because domain limit is 3 and .info has 4 digits;
-     * 
-     * 
-     */
-  static isEmail(email: any, domainLimit = 11) {
-    //Edge cases
-    if (typeof email === "symbol") return false
-    if (String(email)[String(email).length - 1] === ".") return false
-
-    const regex = new RegExp(
-      "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2," + domainLimit +
-      "})+$",
-    )
-    // if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,10})+$/.test(email)) {
-    if (regex.test(email)) {
-      return true
-    }
-    return false
-  }
-
-  static isTypeof<T extends keyof MatchType>(value: any, condition: T): value is MatchType[T] {
-    return typeof value === condition
-  }
-
-  static isHTMLElement = (value: any): value is HTMLElement =>
-    value instanceof HTMLElement;
-
-  static isPostalCode = isPostalCode;
-
-  static isPrimitive(value: unknown): value is Primitive {
-    return Validator.isNullOrUndefined(value) || !(typeof value === "object")
-  }
-  static isString(val: any): val is string {
-    return (typeof val === "string" || val instanceof String)
-  }
-
-  static isNotEmptyString(arg: any): arg is string {
+export const Validator = {
+  isEmail,
+  isTypeof,
+  isPostalCode,
+  isPrimitive,
+  isString,
+  isArray,
+  isJSON,
+  isNullOrUndefined,
+  isObject,
+  isEmptyObject,
+  isFileInput: isFileInput,
+  isDeepEqual,
+  // isDeepEqual: isDeepEqualWilfred,
+  isDeepEqualReact,
+  isSerializable,
+  minLength,
+  maxLength,
+  isLength: isLength,
+  isEmpty: isEmpty,
+  isHTMLElement: (value: any): value is HTMLElement =>
+    value instanceof HTMLElement
+  ,
+  isNotEmptyString(arg: any): arg is string {
     return typeof arg === "string" && arg.trim() !== ""
-  }
+  },
+  isRegex: (value: unknown): value is RegExp => value instanceof RegExp
 
-  /**
-   * Returns true if the length of the argument as string is greater than or equal to the min_lenght parameter.
-   * @param arg string
-   * @param min_length min lenght of the argument for it to be consirered valid.
-   * @example
-   * Validator.isLenghtGreaterThan("wilfred", 4) //return true
-   * Validator.isLenghtGreaterThan("hi", 4) //return false
-   * 
-   */
-  static minLength(arg: any, min_length: number) {
-    return (typeof arg === "string" ||
-      typeof arg === "number") && String(arg).length >= min_length
-  }
-  /**
-   * Returns true if the length of the argument as string is less than or equal to the max_lenght parameter.
-   * @param arg string
-   * @param max_length max lenght of the argument for it to be consirered valid.
-   * @example
-   * Validator.isLenghtLessThan("wilfred", 4) //return false
-   * Validator.isLenghtLessThan("hi", 4) //return true
-   * 
-   */
-  static maxLength(arg: any, max_length: number) {
-    return (typeof arg === "string" ||
-      typeof arg === "number") && String(arg).length <= max_length
-  }
-
-  /**
-   * check if the string's length falls in a range.
-   * @param arg  string to verify
-   * @param options  ({min:0, max: 100000})
-   */
-  static isLength(arg: any, options = { min: 0, max: 100000 }) {
-    return (typeof arg === "string" ||
-      typeof arg === "number") &&
-      String(arg).length >= options.min && String(arg).length <= options.max
-  }
-
-  static isRegex = (value: unknown): value is RegExp => value instanceof RegExp;
-
-  static isSameRegex(reg1: RegExp, reg2: RegExp) {
+  ,
+  isSameRegex(reg1: RegExp, reg2: RegExp) {
     return reg1.source === reg2.source && reg1.flags === reg2.flags
-  }
-
-  static isArray<T extends any>(arg: any): arg is Array<T> {
-    return arg instanceof Array
-  }
-  /**
-   * check if the string has a length of zero.
-   * @param str string
-   * @param {{ignore_whitespace?:boolean }} options 
-   */
-  static isEmpty(str: any, options: { ignore_whitespace?: boolean } = {}) {
-    if (!Validator.isString(str)) {
-      return false
-    }
-    const default_is_empty_options = {
-      ignore_whitespace: false,
-    }
-    options = merge(options, default_is_empty_options)
-
-    return (options.ignore_whitespace ? str.trim().length : str.length) === 0
-  }
+  },
 
   /**
    * Check if the string is valid JSON (if it can be parsed to json)
    * @param str 
    * @param options 
    */
-  static isJSON(str: string, options: { allow_primitives?: boolean } = {}) {
-    if (!Validator.isString(str)) {
-      return false
-    }
-    try {
-      const default_json_options = {
-        allow_primitives: false,
-      }
-      options = merge(options, default_json_options)
-      let primitives: any[] = []
-      if (options.allow_primitives) {
-        primitives = [null, false, true]
-      }
 
-      const obj = JSON.parse(str)
-      return primitives.includes(obj) || (!!obj && typeof obj === "object")
-    } catch (e) { /* ignore */ }
-    return false
-  }
   /**
    *  Check if the string contains only letters (a-zA-Z).
    * @param str 
    * @param locale 
    */
-  static isAlpha(str: string, locale: keyof typeof alpha = "en-US") {
+  isAlpha(str: string, locale: keyof typeof alpha = "en-US") {
     if (!Validator.isString(str)) {
       return false
     }
@@ -235,7 +77,8 @@ export class Validator {
     throw new Error(`Invalid locale '${locale}'`)
   }
 
-  static toDate(date: string | number) {
+  ,
+  toDate(date: string | number) {
     if (!Validator.isString(date)) return null
     date = Date.parse(date)
     return !isNaN(date) ? new Date(date) : null
@@ -251,7 +94,8 @@ export class Validator {
    * expect(Validator.isAfter(after, before)).toBe(true);
    * expect(Validator.isAfter("1/1/9000")).toBe(true);
    */
-  static isAfter(value: string, date = String(new Date())) {
+  ,
+  isAfter(value: string, date = String(new Date())) {
     if (!Validator.isString(value)) return false
     const comparison = Validator.toDate(date)
     const original = Validator.toDate(value)
@@ -262,7 +106,8 @@ export class Validator {
    * @param value value to evaluate
    * @param date specified date (defaults to now).
    */
-  static isBefore(value: string, date = String(new Date())) {
+  ,
+  isBefore(value: string, date = String(new Date())) {
     if (!Validator.isString(value)) return false
     const comparison = Validator.toDate(date)
     const original = Validator.toDate(value)
@@ -274,7 +119,8 @@ export class Validator {
    * @param value seed
    * @param options options is an object that defaults to { ignoreCase: false}.  ignoreCase specified whether the case of the substring be same or not.
    */
-  static contains(
+  ,
+  contains(
     fullString: string,
     value: string,
     options: { ignoreCase?: boolean } = {},
@@ -294,12 +140,14 @@ export class Validator {
    * @param str 
    * @param comparison 
    */
-  static equals(str: string, comparison: string) {
+  ,
+  equals(str: string, comparison: string) {
     if (!Validator.isString(str)) return false
     if (!Validator.isString(comparison)) return false
     return str === comparison
   }
-  static isValidDateFormat(format: string) {
+  ,
+  isValidDateFormat(format: string) {
     return /(^(y{4}|y{2})[\/-](m{1,2})[\/-](d{1,2})$)|(^(m{1,2})[\/-](d{1,2})[\/-]((y{4}|y{2})$))|(^(d{1,2})[\/-](m{1,2})[\/-]((y{4}|y{2})$))/gi
       .test(format)
   }
@@ -315,7 +163,8 @@ export class Validator {
    * expect(Validator.isDate("2020/01/01")).toBe(true);
    * expect(Validator.isDate("2020/1/1", "YYYY/M/D")).toBe(true);
    */
-  static isDate(input: string, format: string = "YYYY/MM/DD") {
+  ,
+  isDate(input: string, format: string = "YYYY/MM/DD") {
     if (typeof input === "string" && Validator.isValidDateFormat(format)) {
       const splitter = /[-/]/,
         dateAndFormat = zip(
@@ -344,7 +193,8 @@ export class Validator {
    * @param str 
    * @param options 
    */
-  static isDecimal(str: string, options: {
+  ,
+  isDecimal(str: string, options: {
     force_decimal?: boolean
     decimal_digits?: string
     locale?: keyof typeof decimal
@@ -383,7 +233,8 @@ export class Validator {
  * to { protocols: ['http','https','ftp'], require_tld: true, require_protocol: false, require_host: true, require_valid_protocol: true, allow_underscores: false, host_whitelist: false, host_blacklist: false, allow_trailing_dot: false, allow_protocol_relative_urls: false, disallow_auth: false }
  * 
  */
-  static isURL(
+  ,
+  isURL(
     url: string,
     options: {
       protocols?: string[]
@@ -419,7 +270,8 @@ export class Validator {
    * @param str
    * @param version 4 or 6
    */
-  static isIP(str: string, version: string | number = "") {
+  ,
+  isIP(str: string, version: string | number = "") {
     return isIP.apply(this, [str, version])
   }
 
@@ -432,7 +284,8 @@ export class Validator {
    * Validator.matches("123abc", /[abc]/)) // true
    * Validator.matches("something", /[0-9]/) //false
    */
-  static matches(str: string, pattern: string | RegExp, flags?: string) {
+  ,
+  matches(str: string, pattern: string | RegExp, flags?: string) {
     if (!Validator.isString(str)) return false
     let regex: RegExp
 
@@ -451,7 +304,8 @@ export class Validator {
    * check if the string is a hexadecimal number.
    * @param str 
    */
-  static isHexadecimal(str: string) {
+  ,
+  isHexadecimal(str: string) {
     const hexadecimal = /^(0x|0h)?[0-9A-F]+$/i
     return hexadecimal.test(str)
   }
@@ -459,11 +313,13 @@ export class Validator {
    * 	check if the string is a valid hex-encoded representation of a MongoDB ObjectId.
    * @param str 
    */
-  static isMongoId(str: string) {
+  ,
+  isMongoId(str: string) {
     return Validator.isHexadecimal(str) && str.length === 24
   }
 
-  static isBoolean(val: any): val is boolean {
+  ,
+  isBoolean(val: any): val is boolean {
     return (
       val instanceof Boolean ||
       val === true ||
@@ -472,57 +328,48 @@ export class Validator {
     )
   }
 
-  static isNumber(arg: any): arg is number {
+  ,
+  isNumber(arg: any): arg is number {
     return typeof arg === "number"
   }
 
-  static isKey(value: [] | string) {
+  ,
+  isKey(value: [] | string) {
     return !Validator.isArray(value) &&
       (/^\w*$/.test(value) ||
         !/\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/.test(value))
   }
 
-  static isFunction<T extends Function>(arg: any): arg is T {
+  ,
+  isFunction<T extends Function>(arg: any): arg is T {
     return typeof arg === "function"
   }
 
-  static isUndefined(arg: any): arg is undefined {
-    return typeof arg === "undefined"
-  }
+  ,
+  isUndefined: isUndefined
+  ,
 
-  static isNullOrUndefined(arg: any): arg is undefined {
-    return typeof arg === "undefined" || arg === null
-  }
-  static isObject(arg: any): arg is object {
-    return !Validator.isNullOrUndefined(arg) && !Validator.isArray(arg) &&
-      typeof arg === "object"
-  }
 
-  static isEmptyObject(value: unknown): value is EmptyObject {
-    return Validator.isObject(value) && !Object.keys(value).length
-  }
 
   /**
    * Returns true of all the characters in the string are in uppercase.
    * Returns false if an empty string is passed or the string has any characters in lowercase.
    * @param {String} string string to verify
    */
-  static isUppercase(string: any) {
+  isUppercase(string: any) {
     if (!string || typeof string !== "string") {
       return false
     }
     return string === string.toUpperCase()
   }
 
-  static isFileInput = (
-    element: FieldElement,
-  ): element is HTMLInputElement => element.type === "file";
+  ,
   /**
    * Check if string or number is integer
    * @param str 
    * @param options 
    */
-  static isInt(str: number | string, options: {
+  isInt(str: number | string, options: {
     min?: number
     max?: number
     lt?: number
@@ -556,21 +403,20 @@ export class Validator {
    * Check if is a valid port number. should be a integer less than 65535
    * @param port 
    */
-  static isPort(port: string | number) {
+  ,
+  isPort(port: string | number) {
     return Validator.isInt(port, { min: 0, max: 65535 })
   }
 
-  static isDeepEqual = isDeepEqual;
-  // static isDeepEqual = isDeepEqualWilfred
 
-  static isDeepEqualReact = isDeepEqualReact;
 
   /**
    * Check if the string is of type slug. Options allow a single hyphen between string. 
    * e.g. [cn-cn, cn-c-c]
    * @param str 
    */
-  static isSlug(str: string) {
+  ,
+  isSlug(str: string) {
     if (!Validator.isString(str)) return false
     let charsetRegex = /^[^\s-_](?!.*?[-_]{2,})([a-z0-9-\\]{1,})[^\s]*[^-_\s]$/
     return (charsetRegex.test(str))
@@ -580,7 +426,8 @@ export class Validator {
    * Returns false if an empty string is passed or the string has any characters in uppercase.
    * @param {String} string string to verify
    */
-  static isLowerCase(string: any) {
+  ,
+  isLowerCase(string: any) {
     if (!string || typeof string !== "string") {
       return false
     }
@@ -590,7 +437,8 @@ export class Validator {
      * Returns true if character is alpha-numeric a-z | A-Z | 0-9
      * @param str single character. if more than one character is passed it will only evaluate the char at position 0.
      */
-  static isAlphaNumeric(
+  ,
+  isAlphaNumeric(
     str: string,
     locale: keyof typeof alphanumeric = "en-US",
   ) {
@@ -608,15 +456,16 @@ export class Validator {
    * @param {number} number
    * @return {boolean}
    */
-  static isEven(number: number) {
+  ,
+  isEven(number: number) {
     //could also be (number % 2) === 0
     //Using & bitwise operator.
     return (number & 1) === 0
   }
 
-  static isSerializable = isSerializable;
 
-  static isOdd(number: number) {
+  ,
+  isOdd(number: number) {
     //but could also be (number % 2) !== 0
     //Using & instead of % here. & represents a bitwise operation.
     return (number & 1) !== 0
@@ -627,7 +476,8 @@ export class Validator {
    * @param {number} number - 32-bit integer.
    * @return {boolean}
    */
-  static isPositive(number: number) {
+  ,
+  isPositive(number: number) {
     if (!Validator.isNumber(number)) return false
     // Zero is neither a positive nor a negative number.
     if (number === 0) {
@@ -641,7 +491,8 @@ export class Validator {
    * @param n number to verify
    * @complexity O(log n) :)
    */
-  static isPrime(n: number) {
+  ,
+  isPrime(n: number) {
     //base cases
     if (n < 2) return false
     if (n === 2) return true
@@ -660,7 +511,8 @@ export class Validator {
    * @example
    * console.log(NumberHelper.isPowerOfTwo(16)) //true
    */
-  static isPowerOfTwo(number: number): boolean {
+  ,
+  isPowerOfTwo(number: number): boolean {
     if (number < 1) return false
     return (number & (number - 1)) === 0
   }
@@ -714,5 +566,7 @@ export function isDeepEqualWilfred(val1: any, val2: any): boolean {
 
   return false
 }
+
+
 
 

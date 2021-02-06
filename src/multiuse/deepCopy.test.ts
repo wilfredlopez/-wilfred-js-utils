@@ -2,35 +2,19 @@ import deepCopy from './deepCopy'
 
 
 describe('deepCopy', () => {
-    it('works with HTML Elements', () => {
-        class Test{
-            div:HTMLElement
-            divs:HTMLElement[]
-            constructor(){
-               this.div = document.createElement('div')
-               this.divs = []
-               this.divs[0] = this.div
-               this.divs[1] = this.div
-            }
-            show(){}
-        }
-        const test = new Test()
-        expect(deepCopy.bind(null,test)).not.toThrow()
-        const testCopy = deepCopy(test)
-        expect(testCopy.divs.length).toBe(2)
-    })
+
 
     it('makes a deepCopy of array', () => {
         const a1 = [1]
         const a2 = [2]
         const arrOnObj = [2]
-        const obj = {'me': 1, 'you': arrOnObj}
+        const obj = { 'me': 1, 'you': arrOnObj }
         let sym = Symbol('wil')
         let t = true
         let f = false
         let n = 50
         let s = "Hola"
-        const original = [a2,a1, s, n, sym, null, undefined, obj, t, f]
+        const original = [a2, a1, s, n, sym, null, undefined, obj, t, f]
 
         const mutatedCopy = [...original]
         const copy = deepCopy(original)
@@ -55,21 +39,21 @@ describe('deepCopy', () => {
     it('works with all data types', () => {
         expect(deepCopy.bind(null, 'Im String')).not.toThrow()
         expect(deepCopy.bind(null, 11111)).not.toThrow()
-        expect(deepCopy.bind(null,false)).not.toThrow()
-        expect(deepCopy.bind(null,true)).not.toThrow()
-        expect(deepCopy.bind(null,Symbol('me'))).not.toThrow()
-        expect(deepCopy.bind(null,{})).not.toThrow()
-        expect(deepCopy.bind(null,[])).not.toThrow()
-        expect(deepCopy.bind(null,null)).not.toThrow()
-        expect(deepCopy.bind(null,undefined)).not.toThrow()
-        expect(deepCopy.bind(null,/w[regex]/)).not.toThrow()
-        expect(deepCopy.bind(null,new Map())).not.toThrow()
-        expect(deepCopy.bind(null,new Set())).not.toThrow()
-        const fn = (name:string) => name
-        expect(deepCopy.bind(null,fn)).not.toThrow()
-        expect(deepCopy.bind(null,function(){
+        expect(deepCopy.bind(null, false)).not.toThrow()
+        expect(deepCopy.bind(null, true)).not.toThrow()
+        expect(deepCopy.bind(null, Symbol('me'))).not.toThrow()
+        expect(deepCopy.bind(null, {})).not.toThrow()
+        expect(deepCopy.bind(null, [])).not.toThrow()
+        expect(deepCopy.bind(null, null)).not.toThrow()
+        expect(deepCopy.bind(null, undefined)).not.toThrow()
+        expect(deepCopy.bind(null, /w[regex]/)).not.toThrow()
+        expect(deepCopy.bind(null, new Map())).not.toThrow()
+        expect(deepCopy.bind(null, new Set())).not.toThrow()
+        const fn = (name: string) => name
+        expect(deepCopy.bind(null, fn)).not.toThrow()
+        expect(deepCopy.bind(null, function () {
         })).not.toThrow()
-      
+
     })
 
     it('goes as deep as necesary', () => {
@@ -79,7 +63,7 @@ describe('deepCopy', () => {
         const data = {
             api: {
                 db: {
-                    users:[ {
+                    users: [{
                         user: user
                     }]
                 }
@@ -92,6 +76,6 @@ describe('deepCopy', () => {
         expect(regularCopy.api.db.users[0].user.name).toBe("FULANO")
         expect(data.api.db.users[0].user.name).toBe("FULANO")
         expect(copy.api.db.users[0].user.name).toBe("SOMEONE")
-      
+
     })
 })

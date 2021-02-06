@@ -1,4 +1,3 @@
-import { Validator } from "../validator"
 
 //eslint-disable-next-line
 const freeGlobal = typeof global === "object" && global !== null &&

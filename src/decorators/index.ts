@@ -19,4 +19,3 @@ export const Decorators = {
   ReplaceUndefined,
 }
 
-export default Decorators

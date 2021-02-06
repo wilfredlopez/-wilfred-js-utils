@@ -1,8 +1,11 @@
 import { deepCopy, dropRightWhile } from '../multiuse'
-import { Validator } from '..'
+import { isArray } from '../validator/isArray'
+import { isUndefined } from '../validator/multi'
+import { mostDigits } from './mostDigits'
+import { digitCount } from './digitCount'
 
 export function allValuesInArrayAreEqual(arg: any[]): boolean {
-  if (!Validator.isArray(arg)) {
+  if (!isArray(arg)) {
     throw new Error('Arg is not an array')
   } else {
     return arg.every((value, _index, array) => value === array[0])
@@ -223,7 +226,7 @@ export class ArrayHelper {
   }
 
   static fillEmptyArray = <T>(value: T | T[]): undefined[] | undefined =>
-    Validator.isArray(value) ? Array(value.length).fill(undefined) : undefined
+    isArray(value) ? Array(value.length).fill(undefined) : undefined
 
   static insert<T>(data: T[], index: number): (T | undefined)[]
   static insert<T>(data: T[], index: number, value: T | T[]): T[]
@@ -234,7 +237,7 @@ export class ArrayHelper {
   ): (T | undefined)[] {
     return [
       ...data.slice(0, index),
-      ...(Validator.isArray(value) ? value : [value || undefined]),
+      ...(isArray(value) ? value : [value || undefined]),
       ...data.slice(index),
     ]
   }
@@ -264,7 +267,7 @@ export class ArrayHelper {
   static prepend<T>(data: T[], value: T | T[]): T[]
   static prepend<T>(data: T[], value?: T | T[]): (T | undefined)[] {
     return [
-      ...(Validator.isArray(value) ? value : [value || undefined]),
+      ...(isArray(value) ? value : [value || undefined]),
       ...data,
     ]
   }
@@ -309,8 +312,8 @@ export class ArrayHelper {
     from: number,
     to: number
   ): (T | undefined)[] => {
-    if (Validator.isArray(data)) {
-      if (Validator.isUndefined(data[to])) {
+    if (isArray(data)) {
+      if (isUndefined(data[to])) {
         data[to] = undefined as any
       }
       data.splice(to, 0, data.splice(from, 1)[0])
@@ -321,9 +324,9 @@ export class ArrayHelper {
   }
 
   static removeArrayAt = <T>(data: T[], index?: number | number[]): T[] =>
-    Validator.isUndefined(index)
+    isUndefined(index)
       ? []
-      : Validator.isArray(index)
+      : isArray(index)
         ? ArrayHelper.removeAtIndexes(data, index)
         : ArrayHelper.removeAt(data, index)
 
@@ -386,7 +389,7 @@ export class ArrayHelper {
   }
 
   static isArray<T extends any>(arg: any): arg is Array<T> {
-    return Validator.isArray(arg)
+    return isArray(arg)
   }
 
   static arraysEqual(a: any[], b: any[]): boolean {
@@ -420,35 +423,11 @@ export class ArrayHelper {
     }
   }
 
-  /**
-   * gets the count of digits that a number has.
-   * @param num number
-   * @example
-   * digitCount(1234) // 4
-   * digitCount(1) // 1
-   */
-  static digitCount(num: number) {
-    if (num === 0) return 1
-    return Math.floor(Math.log10(Math.abs(num))) + 1
-  }
 
-  /**
-   * Finds the max digit count in the array of numbers.
-   * @param arr array of numbers
-   * @example
-   *  mostDigits([22, 403, 12345678]); // 8
-   */
-  static mostDigits(arr: number[]) {
-    let maxDigits = 0
+  static digitCount = digitCount
 
-    for (const n of arr) {
-      maxDigits = Math.max(ArrayHelper.digitCount(n), maxDigits)
-    }
-    return maxDigits
-    //this would do it but we iterate twice on the array. one for the map and another one spreading the array into Math.max
-    //the one on top only goes one time by the array
-    //   return Math.max(...arr.map((d) => digitCount(d)));
-  }
+
+  static mostDigits = mostDigits
 
   private static merge<T>(
     leftArr: T[] = [],
