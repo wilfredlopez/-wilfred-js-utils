@@ -1,6 +1,6 @@
-import isFQDN from "./isFQDN";
-import isIP from "./isIP";
-import { merge } from "./merge";
+import isFQDN from "./isFQDN"
+import isIP from "./isIP"
+import { merge } from "../multiuse"
 
 /*
 options for isURL method
@@ -20,22 +20,22 @@ const default_url_options = {
   allow_underscores: false,
   allow_trailing_dot: false,
   allow_protocol_relative_urls: false,
-};
+}
 
-const wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/;
+const wrapped_ipv6 = /^\[([^\]]+)\](?::([0-9]+))?$/
 
 function isRegExp(obj: any) {
-  return Object.prototype.toString.call(obj) === "[object RegExp]";
+  return Object.prototype.toString.call(obj) === "[object RegExp]"
 }
 
 function checkHost(host: any, matches: any) {
   for (let i = 0; i < matches.length; i++) {
-    let match = matches[i];
+    let match = matches[i]
     if (host === match || (isRegExp(match) && match.test(host))) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 /**
@@ -44,110 +44,110 @@ function checkHost(host: any, matches: any) {
  * @param options options is an object which defaults to { protocols: ['http','https','ftp'], require_tld: true, require_protocol: false, require_host: true, require_valid_protocol: true, allow_underscores: false, host_whitelist: false, host_blacklist: false, allow_trailing_dot: false, allow_protocol_relative_urls: false, disallow_auth: false }
  */
 export default function isURL(url: string, options: {
-  protocols?: string[];
-  require_tld?: boolean;
-  require_protocol?: boolean;
-  require_host?: boolean;
-  require_valid_protocol?: boolean;
-  allow_underscores?: boolean;
-  allow_trailing_dot?: boolean;
-  allow_protocol_relative_urls?: boolean;
-  disallow_auth?: boolean;
-  host_whitelist?: boolean;
-  host_blacklist?: boolean;
+  protocols?: string[]
+  require_tld?: boolean
+  require_protocol?: boolean
+  require_host?: boolean
+  require_valid_protocol?: boolean
+  allow_underscores?: boolean
+  allow_trailing_dot?: boolean
+  allow_protocol_relative_urls?: boolean
+  disallow_auth?: boolean
+  host_whitelist?: boolean
+  host_blacklist?: boolean
 } = {}): boolean {
-  if (typeof url !== "string") return false;
+  if (typeof url !== "string") return false
   if (!url || url.length >= 2083 || /[\s<>]/.test(url)) {
-    return false;
+    return false
   }
   if (url.indexOf("mailto:") === 0) {
-    return false;
+    return false
   }
-  options = merge(options, default_url_options);
-  let protocol, auth, host, hostname, port, port_str, split, ipv6;
+  options = merge(options, default_url_options)
+  let protocol, auth, host, hostname, port, port_str, split, ipv6
 
-  split = url.split("#");
-  url = split.shift()!;
+  split = url.split("#")
+  url = split.shift()!
 
-  split = url.split("?");
-  url = split.shift()!;
+  split = url.split("?")
+  url = split.shift()!
 
-  split = url.split("://");
+  split = url.split("://")
   if (split.length > 1) {
-    protocol = split.shift()!.toLowerCase();
+    protocol = split.shift()!.toLowerCase()
     if (
       options.require_valid_protocol &&
       options.protocols!.indexOf(protocol) === -1
     ) {
-      return false;
+      return false
     }
   } else if (options.require_protocol) {
-    return false;
+    return false
   } else if (url.substr(0, 2) === "//") {
     if (!options.allow_protocol_relative_urls) {
-      return false;
+      return false
     }
-    split[0] = url.substr(2);
+    split[0] = url.substr(2)
   }
-  url = split.join("://");
+  url = split.join("://")
 
   if (url === "") {
-    return false;
+    return false
   }
 
-  split = url.split("/");
-  url = split.shift()!;
+  split = url.split("/")
+  url = split.shift()!
 
   if (url === "" && !options.require_host) {
-    return true;
+    return true
   }
 
-  split = url.split("@");
+  split = url.split("@")
   if (split.length > 1) {
     if (options.disallow_auth!) {
-      return false;
+      return false
     }
-    auth = split.shift()!;
+    auth = split.shift()!
     if (auth.indexOf(":") >= 0 && auth.split(":").length > 2) {
-      return false;
+      return false
     }
   }
-  hostname = split.join("@");
+  hostname = split.join("@")
 
-  port_str = null;
-  ipv6 = null;
-  const ipv6_match = hostname.match(wrapped_ipv6);
+  port_str = null
+  ipv6 = null
+  const ipv6_match = hostname.match(wrapped_ipv6)
   if (ipv6_match) {
-    host = "";
-    ipv6 = ipv6_match[1];
-    port_str = ipv6_match[2] || null;
+    host = ""
+    ipv6 = ipv6_match[1]
+    port_str = ipv6_match[2] || null
   } else {
-    split = hostname.split(":");
-    host = split.shift()!;
+    split = hostname.split(":")
+    host = split.shift()!
     if (split.length) {
-      port_str = split.join(":");
+      port_str = split.join(":")
     }
   }
 
   if (port_str !== null) {
-    port = parseInt(port_str, 10);
+    port = parseInt(port_str, 10)
     if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
-      return false;
+      return false
     }
   }
 
   if (!isIP(host) && !isFQDN(host, options) && (!ipv6 || !isIP(ipv6, 6))) {
-    return false;
+    return false
   }
 
-  host = host || ipv6;
+  host = host || ipv6
 
   if (options.host_whitelist! && !checkHost(host, options.host_whitelist!)) {
-    return false;
+    return false
   }
   if (options.host_blacklist! && checkHost(host, options.host_blacklist!)) {
-    return false;
+    return false
   }
 
-  return true;
+  return true
 }

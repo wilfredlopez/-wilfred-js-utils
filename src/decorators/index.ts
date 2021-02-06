@@ -5,9 +5,9 @@ import {
   Deprecated,
   ReadOnly,
   Rejectable,
-} from "./methods";
-import { Validate } from "./accesors";
-import { ReplaceUndefined } from "./class";
+} from "./methods"
+import { Validate } from "./accesors"
+import { ReplaceUndefined } from "./class"
 export const Decorators = {
   Memoize,
   clearMemoizeCache,
@@ -17,6 +17,6 @@ export const Decorators = {
   ConsoleLog,
   Deprecated,
   ReplaceUndefined,
-};
+}
 
-export default Decorators;
+export default Decorators

@@ -1,14 +1,11 @@
 import isUrl from "./isUrl"
 import isIP from "./isIP"
 import isPostalCode from "./isPostalCode"
-import { ArrayHelper } from "../utils"
+import { ArrayHelper } from "../arrays"
 import { isSerializable } from "./isSerializable"
 import { isDeepEqual, isDeepEqualReact } from "./isDeepEqual"
-import { includes } from "./includes"
 import { alpha, alphanumeric, decimal } from "./constants"
-import { zip } from "./zip"
-import { merge } from "./merge"
-
+import { merge, includes, zip } from "../multiuse"
 declare const $NestedValue: unique symbol
 
 export type IsFlatObject<T extends object> = Extract<
@@ -42,6 +39,41 @@ export type CustomElement<TFieldValues extends FieldValues> = {
   files?: FileList | null
   focus?: VoidFunction
 }
+
+
+
+export type TypeOfConditions =
+  | "bigint"
+  | "boolean"
+  | "function"
+  | "number"
+  | "object"
+  | "string"
+  | "symbol"
+  | "undefined"
+
+
+interface MatchType {
+  "bigint": BigInt
+  "boolean": boolean
+  "function": (...args: any[]) => any
+  "number": number
+  "object": object
+  "string": string
+  "symbol": symbol
+  "undefined": undefined,
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Validator
@@ -77,6 +109,10 @@ export class Validator {
       return true
     }
     return false
+  }
+
+  static isTypeof<T extends keyof MatchType>(value: any, condition: T): value is MatchType[T] {
+    return typeof value === condition
   }
 
   static isHTMLElement = (value: any): value is HTMLElement =>
@@ -678,3 +714,5 @@ export function isDeepEqualWilfred(val1: any, val2: any): boolean {
 
   return false
 }
+
+
