@@ -208,33 +208,50 @@ console.log(dg.from('animals')) //dog
 
 ### Other Utilities
 
-- [`createGlobalStyle`] - Append styles to document's head. you can pass a string or an object with CSSProperties as arguments.
+- [`pick`] - pick properties from an object.
 
 ```ts
-import { createGlobalStyle } from '@wilfredlopez/js-utils'
+import { pick } from '@wilfredlopez/js-utils'
 
-/*
-Appends to document's head
-<style>
-body{
-  background-color: red;
+const user = {
+  name: 'name',
+  email: 'string',
+  other: 'other',
 }
-</style>
-*/
+const properUser = pick(user, ['name', 'email'])
 
-createGlobalStyle({
-  body: {
-    backgroundColor: 'red',
-  },
-})
-
-//OR
-
-createGlobalStyle(`
-  body: {
-    background: red;
-  }
-`)
+console.log(properUser.email)
 ```
 
-#### AND MUCH MORE...
+- [`RoutePathGetter`] - Class to orginize the router paths of an application.
+
+```ts
+import { RoutePathGetter } from '@wilfredlopez/js-utils'
+//Creating Instance
+const appRoutes = new RoutePathGetter({
+  home: {
+    value: '/',
+  },
+  profile: {
+    value: '/profile/:id',
+    params: {
+      id: '',
+    },
+  },
+})
+//Using Instance with Type Safety
+appRoutes.path('profile', {
+  params: {
+    id: '1',
+  },
+}) // returns '/profile/1
+// appRoutes.path('profile', { params:  {ss:''}}) // TypeError: Object literal may only specify known properties, and 'ss' does not exist in type '{ id: string; }'
+appRoutes.path('home') // returns '/'
+// appRoutes.path('other'); // Argument of type '"other"' is not assignable to parameter of type 'RouteKeys'.
+```
+
+- [`debounce`] - Debounce function
+
+- [`throttle`] - Throttle function
+
+- [`dropRightWhile`] - Creates a slice of array excluding elements dropped from the end. Elements are dropped until predicate returns falsey.
