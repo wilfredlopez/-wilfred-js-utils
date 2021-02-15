@@ -39,13 +39,14 @@ const NumberHelperBase = {
 
   /**
    * Get random integer.
-   * @param from - number to start from. Defaults to 0.
-   * @param upTo - number to end. Defaults to 100.
+   * @param min - number to start from. Defaults to 0.
+   * @param max - number to end. Defaults to 100.
    */
-  getRandomInt(from = 0, upTo = 100) {
-    return from + Math.floor(Math.random() * (upTo - from))
+  getRandomInt(min = 0, max = 100) {
+    min = Math.ceil(min)
+    max = Math.floor(max)
+    return Math.floor(Math.random() * (max - min) + min)
   },
-
   /**
    * Parse text to int.
    * @param text - Text to parse to int.
