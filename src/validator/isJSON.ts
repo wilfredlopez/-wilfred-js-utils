@@ -1,4 +1,4 @@
-import { merge } from 'src/multiuse'
+import { merge } from '../multiuse'
 import { isString } from './isString'
 
 export function isJSON(str: string, options: { allow_primitives?: boolean } = {}) {

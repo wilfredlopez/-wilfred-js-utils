@@ -1,38 +1,38 @@
-import { deepCopy, dropRightWhile } from '../multiuse'
+import { deepCopy, dropRightWhile, dropRight } from '../multiuse'
 import { isArray } from '../validator/isArray'
 import { isUndefined } from '../validator/multi'
 import { mostDigits } from './mostDigits'
 import { digitCount } from './digitCount'
+import { Predicate, map, spanIndexUncurry, last, dropRightTimes } from './common'
 
-export function allValuesInArrayAreEqual(arg: any[]): boolean {
-  if (!isArray(arg)) {
-    throw new Error('Arg is not an array')
-  } else {
-    return arg.every((value, _index, array) => value === array[0])
-  }
-}
 
-export function map<T extends any>(
-  array: T[],
-  iteratee: (value: T, index: number, array: T[]) => void
-) {
-  let index = -1
-  const length = array == null ? 0 : array.length
-  const result: any[] = new Array<T>(length)
 
-  while (++index < length) {
-    result[index] = iteratee(array[index], index, array)
-  }
-  return result as T[]
-}
-
-function last<T extends any>(array: T[]) {
-  const length = array == null ? 0 : array.length
-  return length ? array[length - 1] : undefined
-}
 export type ReadOnlyArray = readonly any[]
 
 export class ArrayHelper {
+
+  static takeLeft(len: number) {
+    return <A>(arr: Array<A>) => {
+      const rt: Array<A> = []
+      for (let i = 0; i < len && i < arr.length; i++) {
+        rt.push(arr[i])
+      }
+      return rt
+    }
+  }
+
+  static takeRight(len: number) {
+    return <A>(arr: Array<A>) => {
+      const rt: Array<A> = []
+      for (let i = arr.length - 1; rt.length < len && i > 0; i--) {
+        rt.unshift(arr[i])
+      }
+      return rt
+    }
+  }
+
+  static dropRightTimes = dropRightTimes
+
   /**
    * Returns a shuffle version of the array
    * @param array
@@ -85,7 +85,7 @@ export class ArrayHelper {
    * Gets the last element of array.
    * @param array
    */
-  static last<T extends any>(array: T[]) {
+  static last<T>(array: T[]) {
     return last(array)
   }
 
@@ -95,12 +95,7 @@ export class ArrayHelper {
    * @param {Function} iteratee The function invoked per iteration.
    * @returns {Array} Returns the new mapped array.
    */
-  static map<T extends any>(
-    array: T[],
-    iteratee: (value: T, index: number, array: T[]) => void
-  ): Array<T> {
-    return map(array, iteratee)
-  }
+  static map = map
 
   /**
    * Creates a function to map an array with a determined callback
@@ -120,12 +115,38 @@ export class ArrayHelper {
    * @param predicate The function invoked per iteration.
    * @returns a new array
    */
+  // static dropRightWhile<T extends any>(
+  //   array: T[],
+  //   predicate: Predicate<T>
+  // ) {
+  //   return dropRightWhile<T>(array, predicate)
+  // }
+
   static dropRightWhile<T extends any>(
-    array: T[],
-    predicate: (value: T) => boolean
-  ) {
-    return dropRightWhile(array, predicate)
+    predicate: Predicate<T>
+  ): (array: ReadonlyArray<T>) => ReadonlyArray<T> {
+    return (array) => {
+      const arr = dropRightWhile(array as T[], predicate)
+      return arr
+    }
   }
+
+  /**
+   *  
+   * @param predicate 
+   */
+  static dropLeftWhile<A>(predicate: Predicate<A>): (as: ReadonlyArray<A>) => ReadonlyArray<A> {
+    return (as) => {
+      const i = spanIndexUncurry(as, predicate)
+      const l = as.length
+      const rest = Array(l - i)
+      for (let j = i; j < l; j++) {
+        rest[j - i] = as[j]
+      }
+      return rest
+    }
+  }
+  static dropRight = dropRight
 
   static splitArray<T extends any>(array: Array<T>): [T[], T[]] {
     const unmutated = ArrayHelper.deepCopy(array)
@@ -162,28 +183,11 @@ export class ArrayHelper {
       ArrayHelper.quickSort(inputArr, { left: pivotIndex + 1, right, compare })
     }
     return inputArr
+  }
 
-    /*****************************
-      ALTERNATIVE IMPLEMENTATION.
-    *************************** */
-    // if (inputArr.length < 2) return inputArr;
-    // const pivotIndex = inputArr.length -1
-    // const pivot = inputArr[pivotIndex];
-    // const leftArr = [];
-    // const rightArr = [];
-    // let compare = comparefn || function (v1: T, v2: T) {
-    //   return v1 < v2;
-    // };
 
-    // for (let i = 0; i < pivotIndex; i++) {
-    //   const current = inputArr[i];
-    //   if (compare(current, pivot)) {
-    //     leftArr.push(current);
-    //   } else {
-    //     rightArr.push(current);
-    //   }
-    // }
-    // return [...ArrayHelper.quickSort(leftArr, compare), pivot, ...ArrayHelper.quickSort(rightArr, compare)];
+  static first<A>(arr: Array<A>): A | undefined {
+    return arr[0] as A | undefined
   }
 
   private static _pivot<T>(
@@ -523,23 +527,6 @@ export class ArrayHelper {
       yield array[--i]
     }
   }
-  // static createReverseArrayIterator<T>(array: T[]) {
-  //   let i = array.length;
-  //   return {
-  //     next: () => ({
-  //       value: array[--i],
-  //       done: i < 0,
-  //     }),
-  //     [Symbol.iterator]() {
-  //       return {
-  //         next: () => ({
-  //           value: array[--i],
-  //           done: i < 0,
-  //         }),
-  //       };
-  //     },
-  //   };
-  // }
 }
 
 // const { reverseArray, splitArray, chunkArr } = ArrayHelper
@@ -563,3 +550,5 @@ export class ArrayHelper {
 //     },
 //   ),
 // ); // [ 'A', 'B', 'D', 'G', 'H', 'b', 'Z', 'a' ]
+
+

@@ -1,5 +1,5 @@
 import { isString } from './isString'
-import { merge } from 'src/multiuse'
+import { merge } from '../multiuse'
 
 export function isUndefined(arg: any): arg is undefined {
     return typeof arg === "undefined"

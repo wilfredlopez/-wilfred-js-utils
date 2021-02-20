@@ -84,7 +84,84 @@ export function dropRightWhile<T extends any>(
 }
 
 
+export function dropRight<T extends any>(array: T[], n = 1) {
+    const length = array == null ? 0 : array.length
+    n = length - toInteger(n)
+    return length ? slice(array, 0, n < 0 ? 0 : n) : []
+}
 
+export function toInteger(value: number) {
+    const result = toFinite(value)
+    const remainder = result % 1
+
+    return remainder ? result - remainder : result
+}
+
+/** Used as references for various `Number` constants. */
+const MAX_INTEGER = 1.7976931348623157e+308
+
+
+/** Used to detect bad signed hexadecimal string values. */
+const reIsBadHex = /^[-+]0x[0-9a-f]+$/i
+
+/** Used to detect binary string values. */
+const reIsBinary = /^0b[01]+$/i
+
+/** Used to detect octal string values. */
+const reIsOctal = /^0o[0-7]+$/i
+function isObject(value: any): value is object | Function {
+    const type = typeof value
+    return value != null && (type === 'object' || type === 'function')
+}
+/**
+ * Converts `value` to a finite number.
+ *
+ * 
+ * toFinite(0xffffff)
+ * // => 16777215
+ * 
+ * toFinite(3.2)
+ * // => 3.2
+ *
+ * toFinite(Number.MIN_VALUE)
+ * // => 5e-324
+ *
+ * toFinite(Infinity)
+ * // => 1.7976931348623157e+308
+ *
+ * toFinite('3.2')
+ * // => 3.2
+ */
+export function toFinite(value: unknown): number {
+    if (!value) {
+        return value === 0 ? value : 0
+    }
+
+    if (value === Infinity || value === -Infinity) {
+        const sign = (value < 0 ? -1 : 1)
+        return sign * MAX_INTEGER
+    }
+
+    if (typeof value === 'number') {
+        return value
+    }
+
+    if (typeof value === 'symbol') {
+        return NaN
+    }
+    if (isObject(value)) {
+        const other = typeof value === 'function' ? value() : value
+        value = isObject(other) ? `${other}` : other
+    }
+    if (typeof value !== 'string') {
+        return value === 0 ? value : parseInt(String(value))
+    }
+    const isBinary = reIsBinary.test(value)
+    return (isBinary || reIsOctal.test(value))
+        ? parseInt(value.slice(2), isBinary ? 2 : 8)
+        : (reIsBadHex.test(value) ? NaN : +value)
+
+}
 
 
 export const includes = (arr: any[], val: any) =>
