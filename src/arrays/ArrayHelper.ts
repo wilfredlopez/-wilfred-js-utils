@@ -3,9 +3,11 @@ import { isArray } from '../validator/isArray'
 import { isUndefined } from '../validator/multi'
 import { mostDigits } from './mostDigits'
 import { digitCount } from './digitCount'
-import { Predicate, map, spanIndexUncurry, last, dropRightTimes } from './common'
+import { Predicate, map, spanIndexUncurry, last, dropRightTimes, first } from './common'
 
 
+
+type Tail<T extends unknown[]> = T extends readonly [any, ...infer U] ? U : [...T]
 
 export type ReadOnlyArray = readonly any[]
 
@@ -85,9 +87,7 @@ export class ArrayHelper {
    * Gets the last element of array.
    * @param array
    */
-  static last<T>(array: T[]) {
-    return last(array)
-  }
+  static last = last
 
   /**
    * Creates an array of values by running each element of array thru iteratee. The iteratee is invoked with three arguments: (value, index, array).
@@ -186,9 +186,7 @@ export class ArrayHelper {
   }
 
 
-  static first<A>(arr: Array<A>): A | undefined {
-    return arr[0] as A | undefined
-  }
+  static first = first
 
   private static _pivot<T>(
     arr: T[],
@@ -550,5 +548,4 @@ export class ArrayHelper {
 //     },
 //   ),
 // ); // [ 'A', 'B', 'D', 'G', 'H', 'b', 'Z', 'a' ]
-
 

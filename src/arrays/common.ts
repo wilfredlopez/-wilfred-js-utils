@@ -1,9 +1,19 @@
 import { isArray } from '../validator/isArray'
+import type { Head, Last } from '../utility-types'
 
-export function last<T extends any>(array: T[]) {
-    const length = array == null ? 0 : array.length
-    return length ? array[length - 1] : undefined
+// type Tail<T extends readonly unknown[]> = T extends readonly [any, ...infer U] ? U : [...T]
+
+// type Init<T extends readonly unknown[]> = T extends readonly [...infer U, any] ? U : [...T]
+
+export function last<T extends readonly unknown[]>(array: T): Last<T> {
+    const len = Array.isArray(array) ? array.length : -1
+    return array[len - 1] as Last<T>
 }
+
+export function first<A extends readonly unknown[]>(arr: A): Head<A> {
+    return arr[0]
+}
+
 
 export function map<T extends any>(
     array: T[],
@@ -46,3 +56,6 @@ export const spanIndexUncurry = <A>(as: ReadonlyArray<A>, predicate: Predicate<A
     }
     return i
 }
+
+
+
