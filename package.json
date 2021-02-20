@@ -1,6 +1,6 @@
 {
   "name": "@wilfredlopez/js-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility functions and types for Javascript projects",
   "main": "dist/index.js",
   "browser": "dist/index.umd.js",

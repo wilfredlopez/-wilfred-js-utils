@@ -1,5 +1,6 @@
 import { binaryToText, textToBinary } from './binaryDecode'
-import { PatternGenerator } from '.'
+import { PatternGenerator } from './PatternGenerator'
+
 export const StringHelper = {
   binaryToText,
   textToBinary,
