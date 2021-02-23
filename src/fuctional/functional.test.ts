@@ -15,15 +15,15 @@ function double(num: number) {
     return num * 2
 }
 
-type Payload = CatchTry<string, string>
+type Payload = CatchTry<{ code: number, label: string }, string>
 const minLength = (s: string): Payload => {
-    return s.length >= 6 ? success(s) : failure('Password length should be greater than 5')
+    return s.length >= 6 ? success(s) : failure({ code: 1, label: 'Password length should be greater than 5' })
 }
 function oneCapilal(s: string): Payload {
-    return /[A-Z]/g.test(s) ? success(s) : failure("Password most have at least on capital letter")
+    return /[A-Z]/g.test(s) ? success(s) : failure({ code: 2, label: "Password most have at least on capital letter" })
 }
 function oneNumber(s: string): Payload {
-    return /[0-9]/g.test(s) ? success(s) : failure("Password most have at least on number")
+    return /[0-9]/g.test(s) ? success(s) : failure({ code: 3, label: "Password most have at least on number" })
 }
 function validatePassword(s: string) {
     return pipe(minLength(s), chain(oneCapilal), chain(oneNumber))
@@ -57,17 +57,15 @@ describe('flow and pipe', () => {
             expect(gt2(success(3))).toBe(true)
         })
         test('should validate password', async () => {
-
-
-            // onSuccess(validatePassword('WW')).then(success => {
-            //     console.log("SUCCESS:", success)
-            // }).catch(e => {
-            //     console.log("FAILURE:", e)
-            // })
+            onSuccess(validatePassword('WW')).then(_success => {
+                //this will never run since it will fail
+            }).catch(e => {
+                expect(e).toEqual({ code: 1, label: 'Password length should be greater than 5' })
+            })
             // const val = await onSuccess(validatePassword('Wilfred28'))
-            expect(validatePassword('wilfr')).toEqual(failure("Password length should be greater than 5"))
-            expect(validatePassword('wilfred')).toEqual(failure("Password most have at least on capital letter"))
-            expect(validatePassword('Wilfred')).toEqual(failure("Password most have at least on number"))
+            expect(validatePassword('wilfr')).toEqual(failure({ code: 1, label: "Password length should be greater than 5" }))
+            expect(validatePassword('wilfred')).toEqual(failure({ code: 2, label: "Password most have at least on capital letter" }))
+            expect(validatePassword('Wilfred')).toEqual(failure({ code: 3, label: "Password most have at least on number" }))
             expect(validatePassword('Wilfred29')).toEqual(success("Wilfred29"))
 
 
@@ -76,11 +74,11 @@ describe('flow and pipe', () => {
 
         test('should validate success or failure', () => {
             const value = validatePassword('Wilfred22')
-            if (isFailure(value)) {
-                // console.log(value.failure)
-            } else {
-                // console.log("Success: ", value.success)
-            }
+            // if (isFailure(value)) {
+            //     console.log(value.failure)
+            // } else {
+            //     console.log("Success: ", value.success)
+            // }
             expect(isFailure(value)).toBe(false)
             expect(isSuccess(value)).toBe(true)
         })

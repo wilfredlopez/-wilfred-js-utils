@@ -119,16 +119,16 @@ export function flow(
 }
 
 
-function reverse(st: string) {
-    return st.split('').reverse().join('')
-}
+// function reverse(st: string) {
+//     return st.split('').reverse().join('')
+// }
 
-function len(st: string) {
-    return st.length
-}
+// function len(st: string) {
+//     return st.length
+// }
 
-function double(num: number) {
-    return num * 2
-}
+// function double(num: number) {
+//     return num * 2
+// }
 
-const reveserAndDobleLen = flow(reverse, len, double)
+// const reveserAndDobleLen = flow(reverse, len, double)

@@ -313,26 +313,3 @@ export function pipe(
 }
 
 
-
-function reverse(st: string) {
-    return st.split('').reverse().join('')
-}
-
-function len(st: string) {
-    return st.length
-}
-
-function double(num: number) {
-    return num * 2
-}
-
-function pipe2<V, T extends (...args: any) => any>(val: V, ...fns: ReadonlyArray<T>): (param: T) => ReturnType<T> {
-    return (param) => {
-        return fns.reduce((result, fn) => fn(result), param(val))
-    }
-}
-
-const something = (val: string) => pipe(reverse(val), len, double)
-
-
-

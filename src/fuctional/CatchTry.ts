@@ -68,22 +68,41 @@ export const chain: <E, A, B>(f: (a: A) => CatchTry<E, B>) => (ma: CatchTry<E, A
 //     }
 // }
 
-export function onSuccess<Fail, Succe>(value: CatchTry<Fail, Succe>): WlPromise<Succe, Fail> {
 
-    return new WlPromise<Succe, Fail>((res, rej) => {
-        if (isFailure(value)) {
-            rej(value.failure)
-        } else {
-            res(value.success)
-        }
-    })
-    // return new Promise<Succe>((res, reject: (reason: Fail) => void) => {
+
+export interface TypedCatchPromise<T, Fail> extends Promise<T> {
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = Fail>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: Fail) => TResult2 | TypedCatchPromise<TResult2, Fail>) | undefined | null): TypedCatchPromise<TResult1 | TResult2, Fail>
+
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = Fail>(onrejected?: ((reason: Fail) => TResult | PromiseLike<TResult>) | undefined | null): TypedCatchPromise<T | TResult, Fail>
+}
+
+export function onSuccess<Fail, Succe>(value: CatchTry<Fail, Succe>): TypedCatchPromise<Succe, Fail> {
+
+    // return new WlPromise<Succe, Fail>((res, rej) => {
     //     if (isFailure(value)) {
-    //         reject(value.failure)
+    //         rej(value.failure)
     //     } else {
     //         res(value.success)
     //     }
     // })
+    return new Promise<Succe>((res, reject) => {
+        if (isFailure(value)) {
+            reject(value.failure)
+        } else {
+            res(value.success)
+        }
+    }) as TypedCatchPromise<Succe, Fail>
 }
 
 
