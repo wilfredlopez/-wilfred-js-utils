@@ -1,5 +1,7 @@
 import { memoize } from './memoize'
-import { wait } from '@testing-library/react'
+// import { wait } from '@testing-library/react'
+import { wait } from '../test/util'
+
 
 describe('memoize', () => {
   // it("has the expected cache size", () => {
@@ -117,6 +119,6 @@ describe('memoize', () => {
         expect(getUser(1).name).toBe('WIL')
       },
       { timeout: 2000 }
-    ).then(() => {})
+    ).then(() => { })
   })
 })

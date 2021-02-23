@@ -14,8 +14,6 @@
     "build": "npm run build:ts && npm run roll2 && tsc --outDir dist --emitDeclarationOnly",
     "roll2": "rimraf dist && rollup -c rollup.config.js",
     "build:ts": "rimraf tsbuild && tsc -p tsconfig.json --removeComments",
-    "start": "node scripts/start.js",
-    "build:react": "node scripts/build.js",
     "test": "node scripts/test.js",
     "setup": "npm install",
     "build:wp": "rimraf dist && webpack",

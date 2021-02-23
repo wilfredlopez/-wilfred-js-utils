@@ -1,5 +1,5 @@
 import Stream from './Stream'
-import { wait } from '@testing-library/react'
+// import { wait } from '@testing-library/react'
 
 const counterFunction = (n: number) => n + 1
 const nGenerator = () => Math.round(Math.random() * 20)
@@ -148,7 +148,7 @@ describe('Stream', () => {
       let data: string[] = await toLowerCaseSteam.promise('HELLO')
       expect(data).toStrictEqual(['hello', 'hello'])
     })
-    it('Returns a promise of an array of items', () => {
+    it('Returns a promise of an array of items', async () => {
       const userGenetaror = new Stream(() => {
         return {
           name: 'wilfred',
@@ -157,7 +157,7 @@ describe('Stream', () => {
       let users: {
         name: string
       }[] = []
-      wait(() => {
+      await (() => {
         userGenetaror
           .setLimit(2)
           .promise()
