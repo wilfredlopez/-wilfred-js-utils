@@ -2,10 +2,11 @@ import { formatDate } from "./formatDate"
 
 export { formatDate }
 /**
- * add the getFormattedDate function to the Date Object.
+ * add the formatedDate function to the Date Object.
  * @extends Date
  * @example
- * const date = new DateFormatter("August 19, 1975 23:15:30").getFormattedDate()
+ * const date = new DateFormatter("August 19, 1975 23:15:30").formatedDate() 
+ * console.log(date) // "19-Aug-1975"
  */
 export class DateFormatter extends Date {
   toTime = DateFormatter.dateToTime;

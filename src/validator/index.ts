@@ -1,2 +1,5 @@
-export * from "./Validator"
-export type { Primitive } from './types'
+import Valid from '@wilfredlopez/validator'
+
+export const Validator = Valid
+
+export default Validator

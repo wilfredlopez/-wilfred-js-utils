@@ -1,12 +1,8 @@
 import getTypeName from './getTypeName'
-import { isPrimitive } from '../validator/isPrimitive'
+import { Validator } from '../validator'
 
 
 export default function deepCopy<T extends any>(data: T): T {
-
-
-
-
 
   //regex
   if (data instanceof RegExp) {
@@ -17,7 +13,7 @@ export default function deepCopy<T extends any>(data: T): T {
   }
 
   //string | boolean | number | symbol | null | undefined
-  if (isPrimitive(data)) return data
+  if (Validator.isPrimitive(data)) return data
 
   if (getTypeName(data) === 'Document' || getTypeName(data) === 'DocumentType') {
     return data

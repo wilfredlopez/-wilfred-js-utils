@@ -1,4 +1,4 @@
-import { isArray } from '../validator/isArray'
+import { Validator } from '../validator'
 import type { Head, Last } from '../utility-types'
 
 // type Tail<T extends readonly unknown[]> = T extends readonly [any, ...infer U] ? U : [...T]
@@ -39,7 +39,7 @@ export interface Predicate<A> {
 
 
 export function allValuesInArrayAreEqual(arg: any[]): boolean {
-    if (!isArray(arg)) {
+    if (!Validator.isArray(arg)) {
         throw new Error('Arg is not an array')
     } else {
         return arg.every((value, _index, array) => value === array[0])

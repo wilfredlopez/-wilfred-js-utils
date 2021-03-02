@@ -1,13 +1,12 @@
 import { deepCopy, dropRightWhile, dropRight } from '../multiuse'
-import { isArray } from '../validator/isArray'
-import { isUndefined } from '../validator/multi'
+import Validator from '../validator'
 import { mostDigits } from './mostDigits'
 import { digitCount } from './digitCount'
 import { Predicate, map, spanIndexUncurry, last, dropRightTimes, first } from './common'
+const { isArray, isUndefined } = Validator
 
 
-
-type Tail<T extends unknown[]> = T extends readonly [any, ...infer U] ? U : [...T]
+// type Tail<T extends unknown[]> = T extends readonly [any, ...infer U] ? U : [...T]
 
 export type ReadOnlyArray = readonly any[]
 

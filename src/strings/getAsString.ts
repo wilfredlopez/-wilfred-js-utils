@@ -1,4 +1,4 @@
-import { isObject } from '../validator/isObject'
+import { Validator } from '../validator/'
 export function getAsString(value: any): string | undefined {
     if (!value) {
         return undefined
@@ -6,7 +6,7 @@ export function getAsString(value: any): string | undefined {
     if (Array.isArray(value)) {
         return getAsString(value[0])
     }
-    if (isObject(value)) {
+    if (Validator.isObject(value)) {
         return undefined
     }
     return value

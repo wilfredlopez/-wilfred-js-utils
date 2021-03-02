@@ -1,4 +1,4 @@
-import { WlPromise } from './WlPromise'
+// import { WlPromise } from './WlPromise'
 
 export interface Success<E> {
     readonly _tag: 'Success'

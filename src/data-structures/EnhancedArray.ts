@@ -1,4 +1,5 @@
-import { Validator } from "../validator";
+
+import { Validator } from "../validator"
 /**
  * Enhanced array. by default replaces any undefined values when trying to access with replaceUndefinedWith parameter. 
  * @param replaceUndefinedWith defaults to empty array.
@@ -12,51 +13,51 @@ export class EnhancedArray<T> extends Array<T> {
   constructor(
     undefinedReplacer: any = [],
   ) {
-    super();
-    this.#replaceUndefinedWith = undefinedReplacer;
+    super()
+    this.#replaceUndefinedWith = undefinedReplacer
     const proxy = new Proxy<this>(this, {
       get(target, name, receiver) {
-        const realValue = Reflect.get(target, name, receiver);
+        const realValue = Reflect.get(target, name, receiver)
         if (
           (typeof realValue !== "undefined") || (realValue === null) ||
           (realValue === 0)
         ) {
-          return realValue;
+          return realValue
         } else {
-          return target.#replaceUndefinedWith;
+          return target.#replaceUndefinedWith
         }
       },
-    });
-    return proxy;
+    })
+    return proxy
   }
 
   getUndefinedReplacer() {
-    return this.#replaceUndefinedWith;
+    return this.#replaceUndefinedWith
   }
 
   setUndefinedReplacer(val: any) {
-    this.#replaceUndefinedWith = val;
+    this.#replaceUndefinedWith = val
   }
 
   concat(val: T[]) {
     for (const v of val) {
-      this.push(v);
+      this.push(v)
     }
-    return this;
+    return this
   }
 
   //@ts-ignore
   [Symbol.toStringTag]() {
-    return this.toString();
+    return this.toString()
   }
 
   toString() {
-    return JSON.stringify(this);
+    return JSON.stringify(this)
   }
 
   //Returns a promise of the same array object.
   toPromise() {
-    return new Promise<this>((res) => res(this));
+    return new Promise<this>((res) => res(this))
   }
 
   /**
@@ -64,7 +65,7 @@ export class EnhancedArray<T> extends Array<T> {
      */
   clear() {
     while (this.length) {
-      this.pop();
+      this.pop()
     }
   }
 
@@ -73,19 +74,19 @@ export class EnhancedArray<T> extends Array<T> {
      * @param val value to check.
      */
   hasValue(val: any) {
-    return this.findIndex((v) => Validator.isDeepEqual(v, val)) !== -1;
+    return this.findIndex((v) => Validator.isDeepEqual(v, val)) !== -1
   }
 
   findIndexDeep(val: any) {
-    return this.findIndex((v) => Validator.isDeepEqual(v, val));
+    return this.findIndex((v) => Validator.isDeepEqual(v, val))
   }
 
   private deepDelete(val: any) {
-    const index = this.findIndexDeep(val);
+    const index = this.findIndexDeep(val)
     if (index !== -1) {
-      this.splice(index, 1);
+      this.splice(index, 1)
     }
-    return this;
+    return this
   }
 
   /**
@@ -95,14 +96,14 @@ export class EnhancedArray<T> extends Array<T> {
      */
   delete(val: any, deep = false) {
     if (deep) {
-      return this.deepDelete(val);
+      return this.deepDelete(val)
     }
 
-    const indexof = this.indexOf(val);
+    const indexof = this.indexOf(val)
     if (indexof !== -1) {
-      this.splice(indexof, 1);
+      this.splice(indexof, 1)
     }
-    return this;
+    return this
   }
 }
 

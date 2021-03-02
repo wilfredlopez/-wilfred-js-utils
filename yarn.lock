@@ -1960,6 +1960,11 @@
     "@webassemblyjs/wast-parser" "1.8.5"
     "@xtuc/long" "4.2.2"
 
+"@wilfredlopez/validator@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@wilfredlopez/validator/-/validator-1.0.1.tgz#1865af4964b895998774329c478855acc05c5be1"
+  integrity sha512-Dn4gAYdXe/dPrj2VGTSCC9T0R8EvRwIIazvAry3q68MwjwD9KQvbjsxtARdSGZoWMdGckJQ8Pw47g77dirKeTg==
+
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@xtuc/ieee754/-/ieee754-1.2.0.tgz#eef014a3145ae477a1cbc00cd1e552336dceb790"
@@ -8331,6 +8336,11 @@ rollup@^2.26.9:
   integrity sha512-VoWt8DysFGDVRGWuHTqZzT02J0ASgjVq/hPs9QcBOGMd7B+jfTr/iqMVEyOi901rE3xq+Deq66GzIT1yt7sGwQ==
   optionalDependencies:
     fsevents "~2.3.1"
+
+route-path-getter@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/route-path-getter/-/route-path-getter-2.0.0.tgz#f4bc26f3e50c1f3dfee586d45a2b8e0469d722d3"
+  integrity sha512-ek9sTqhKYMWCXilf+cLzjuiWhq+vXI2cOg+tcThMdcFuPCzme5RTK271z3sWHf7cKuSZgRLm+3+GmwFvlcoPmQ==
 
 rsvp@^4.8.4:
   version "4.8.5"
