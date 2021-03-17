@@ -1,7 +1,7 @@
 import { appendMethodObject, appendValueObject } from '../multiuse/appendMethod'
 import secondsToObject from './secondsToObject'
 import { getDigitAt } from './getDigitAt'
-
+import { isLeapYear } from './isLeapYear'
 export type ResultOf<T> =
   | {
     success: true
@@ -15,6 +15,7 @@ export type ResultOf<T> =
   }
 
 const NumberHelperBase = {
+  isLeapYear,
   toString() {
     return `[object NumberHelper]`
   },
@@ -293,10 +294,13 @@ if (n <= 2) return 1;
   },
 }
 
-let NumberHelperWithMath = NumberHelperBase as Math & typeof NumberHelperBase
+// let NumberHelperWithMath:Math & typeof NumberHelperBase = NumberHelperBase as Math & typeof NumberHelperBase
+let NumberHelperWithMath: Math & typeof NumberHelperBase = Object.assign({}, NumberHelperBase, Math)
 for (let key of Reflect.ownKeys(Math)) {
   const fnOrProp = Math[key as keyof Math]
-
+  if (key in NumberHelperWithMath) {
+    continue
+  }
   if (typeof fnOrProp === 'function') {
     NumberHelperWithMath = appendMethodObject(
       NumberHelperWithMath,
